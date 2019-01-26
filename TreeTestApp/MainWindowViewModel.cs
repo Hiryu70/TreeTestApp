@@ -7,7 +7,6 @@ namespace TreeTestApp
     internal sealed class MainWindowViewModel : ViewModelBase
     {
         private Node _selectedNode;
-        private bool _isSelected;
 
         public MainWindowViewModel()
         {
@@ -18,7 +17,13 @@ namespace TreeTestApp
         }
 
 
-        public ObservableCollection<Node> TreeRoot { get; set; }
+        public ObservableCollection<Node> TreeRoot { get; set; } = new ObservableCollection<Node>();
+
+        public Node SelectedNode
+        {
+            get => _selectedNode;
+            set => Set(() => SelectedNode, ref _selectedNode, value);
+        }
 
         public RelayCommand AddCommand { get; set; }
 
@@ -27,41 +32,12 @@ namespace TreeTestApp
         public RelayCommand SaveCommand { get; set; }
 
 
-        public Node SelectedNode
-        {
-            get => _selectedNode;
-            set => Set(() => SelectedNode, ref _selectedNode, value);
-        }
-
-        public bool IsSelected
-        {
-            get => _isSelected;
-            set
-            {
-                if (_isSelected != value)
-                {
-                    Set(() => IsSelected, ref _isSelected, value);
-                    if (value)
-                    {
-                        SelectedNode = 
-                    }
-                }
-
-                if (_isSelected != value)
-                {
-                    _isSelected = value;
-                    OnPropertyChanged("IsSelected");
-                    if (_isSelected)
-                    {
-                        SelectedItem = this;
-                    }
-                }
-            }
-        }
-
         private void Add()
         {
-            var newNode = new Node();
+            var newNode = new Node()
+            {
+                Name = "NewNode"
+            };
             if (SelectedNode != null)
             {
                 SelectedNode.Add(newNode);
@@ -76,10 +52,17 @@ namespace TreeTestApp
 
         private void Delete()
         {
-            SelectedNode?.Parent.Remove(SelectedNode);
+            if (SelectedNode?.Parent == null)
+            {
+                TreeRoot.Remove(SelectedNode);
+            }
+            else
+            {
+                SelectedNode?.Parent?.Remove(SelectedNode);
+            }
         }
 
-        private void Save()
+        private static void Save()
         {
         }
 

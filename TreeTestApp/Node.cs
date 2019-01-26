@@ -3,7 +3,7 @@ using GalaSoft.MvvmLight;
 
 namespace TreeTestApp
 {
-    class Node : ViewModelBase
+    internal sealed class Node : ViewModelBase
     {
         private string _name;
         private string _description;
@@ -20,9 +20,9 @@ namespace TreeTestApp
             set => Set(() => Description, ref _description, value);
         }
 
-        public Node Parent { get; set; }
+        public Node Parent { get; private set; }
 
-        private ObservableCollection<Node> Children { get; set; } = new ObservableCollection<Node>();
+        public ObservableCollection<Node> Children { get; set; } = new ObservableCollection<Node>();
 
         public void Add(Node node)
         {

@@ -1,8 +1,6 @@
-﻿using System.Windows;
-
-namespace TreeTestApp
+﻿namespace TreeTestApp
 {
-    public partial class MainWindow
+    public sealed partial class MainWindow
     {
         public MainWindow()
         {

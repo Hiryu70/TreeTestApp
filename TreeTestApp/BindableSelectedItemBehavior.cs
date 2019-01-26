@@ -2,49 +2,51 @@
 using System.Windows.Controls;
 using System.Windows.Interactivity;
 
-public class BindableSelectedItemBehavior : Behavior<TreeView>
+namespace TreeTestApp
 {
-    #region SelectedItem Property
-
-    public object SelectedItem
+    public sealed class BindableSelectedItemBehavior : Behavior<TreeView>
     {
-        get { return (object)GetValue(SelectedItemProperty); }
-        set { SetValue(SelectedItemProperty, value); }
-    }
+        #region SelectedItem Property
 
-    public static readonly DependencyProperty SelectedItemProperty =
-        DependencyProperty.Register("SelectedItem", typeof(object), typeof(BindableSelectedItemBehavior), new UIPropertyMetadata(null, OnSelectedItemChanged));
-
-    private static void OnSelectedItemChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
-    {
-        var item = e.NewValue as TreeViewItem;
-        if (item != null)
+        public object SelectedItem
         {
-            item.SetValue(TreeViewItem.IsSelectedProperty, true);
+            get => GetValue(SelectedItemProperty);
+            set => SetValue(SelectedItemProperty, value);
         }
-    }
 
-    #endregion
+        public static readonly DependencyProperty SelectedItemProperty =
+            DependencyProperty.Register("SelectedItem", typeof(object), typeof(BindableSelectedItemBehavior), new UIPropertyMetadata(null, OnSelectedItemChanged));
 
-    protected override void OnAttached()
-    {
-        base.OnAttached();
-
-        this.AssociatedObject.SelectedItemChanged += OnTreeViewSelectedItemChanged;
-    }
-
-    protected override void OnDetaching()
-    {
-        base.OnDetaching();
-
-        if (this.AssociatedObject != null)
+        private static void OnSelectedItemChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
-            this.AssociatedObject.SelectedItemChanged -= OnTreeViewSelectedItemChanged;
+            if (e.NewValue is TreeViewItem item)
+            {
+                item.SetValue(TreeViewItem.IsSelectedProperty, true);
+            }
         }
-    }
 
-    private void OnTreeViewSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
-    {
-        this.SelectedItem = e.NewValue;
+        #endregion
+
+        protected override void OnAttached()
+        {
+            base.OnAttached();
+
+            AssociatedObject.SelectedItemChanged += OnTreeViewSelectedItemChanged;
+        }
+
+        protected override void OnDetaching()
+        {
+            base.OnDetaching();
+
+            if (AssociatedObject != null)
+            {
+                AssociatedObject.SelectedItemChanged -= OnTreeViewSelectedItemChanged;
+            }
+        }
+
+        private void OnTreeViewSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            SelectedItem = e.NewValue;
+        }
     }
 }
